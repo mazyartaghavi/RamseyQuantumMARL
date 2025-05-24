@@ -1,0 +1,125 @@
+# Ramsey-Guided Quantum Optimization in Multi-Agent Reinforcement Learning (MARL)
+# Forest Surveillance with 10 UAVs
+
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+from itertools import combinations
+
+# --- ENVIRONMENT SETUP ---
+
+class ForestGrid:
+    def __init__(self, size=(20, 20), event_prob=0.01):
+        self.size = size
+        self.grid = np.zeros(size)
+        self.event_prob = event_prob
+
+    def step(self):
+        # Randomly generate events (e.g., illegal activity)
+        self.grid = (np.random.rand(*self.size) < self.event_prob).astype(int)
+
+    def get_events(self):
+        return np.argwhere(self.grid == 1)
+
+    def display(self):
+        plt.imshow(self.grid, cmap='Greens')
+        plt.title("Forest Events (1 = event)")
+        plt.show()
+
+
+# --- UAV AGENTS ---
+
+class UAV:
+    def __init__(self, id, pos):
+        self.id = id
+        self.pos = pos
+        self.memory = []
+
+    def observe(self, grid, radius=1):
+        x, y = self.pos
+        obs = grid[max(0, x-radius):x+radius+1, max(0, y-radius):y+radius+1]
+        return obs
+
+    def move(self, direction, grid_size):
+        dx, dy = direction
+        x, y = self.pos
+        nx, ny = max(0, min(x + dx, grid_size[0]-1)), max(0, min(y + dy, grid_size[1]-1))
+        self.pos = (nx, ny)
+
+    def act(self, env):
+        obs = self.observe(env.grid)
+        if obs.sum() > 0:
+            self.memory.append((self.pos, 1))
+        else:
+            self.memory.append((self.pos, 0))
+
+
+# --- RAMSEY-THEORETIC STRUCTURE DISCOVERY ---
+
+def construct_interaction_graph(uavs, radius=3):
+    G = nx.Graph()
+    for u1, u2 in combinations(uavs, 2):
+        dist = np.linalg.norm(np.array(u1.pos) - np.array(u2.pos))
+        if dist <= radius:
+            G.add_edge(u1.id, u2.id)
+    return G
+
+def find_cliques(graph, min_size=3):
+    cliques = [c for c in nx.find_cliques(graph) if len(c) >= min_size]
+    return cliques
+
+
+# --- QUANTUM-INSPIRED OPTIMIZATION PLACEHOLDER ---
+
+def quantum_optimize_assignments(uavs, regions):
+    # Placeholder: in practice use QAOA or QUBO solver
+    assignments = {}
+    for i, uav in enumerate(uavs):
+        region_id = i % len(regions)
+        assignments[uav.id] = region_id
+    return assignments
+
+
+# --- MAIN LOOP ---
+
+def simulate():
+    forest = ForestGrid()
+    uavs = [UAV(id=i, pos=(np.random.randint(20), np.random.randint(20))) for i in range(10)]
+
+    for t in range(20):
+        print(f"\n--- Time Step {t} ---")
+        forest.step()
+        forest.display()
+
+        # UAVs act
+        for uav in uavs:
+            direction = np.random.choice([(0,1), (1,0), (0,-1), (-1,0), (0,0)])
+            uav.move(direction, forest.size)
+            uav.act(forest)
+
+        # Construct interaction graph
+        G = construct_interaction_graph(uavs)
+        cliques = find_cliques(G)
+        print(f"Found {len(cliques)} cliques: {cliques}")
+
+        # Ramsey-inspired assumption: explore cliques with stable reward pattern
+        for clique in cliques:
+            print(f"Exploring clique {clique}")
+
+        # QIO (mock): assign UAVs to regions
+        regions = list(range(4))
+        assignment = quantum_optimize_assignments(uavs, regions)
+        print(f"Quantum-inspired assignments: {assignment}")
+
+        # Plot UAV positions
+        pos_array = np.zeros(forest.size)
+        for uav in uavs:
+            x, y = uav.pos
+            pos_array[x, y] = 1
+        plt.imshow(pos_array, cmap='Reds')
+        plt.title("UAV Positions")
+        plt.show()
+
+
+if __name__ == "__main__":
+    simulate()
