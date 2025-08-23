@@ -2,5 +2,5 @@
   title  = {Ramsey-Guided Quantum Optimization for Exploration–Exploitation in Multi-Agent Reinforcement Learning},
   author = {Mazyar taghavi et al.},
   year   = {2025},
-  url    = {https://github.com/<your-org>/qio-marl}
+  url    = {https://github.com/mazyartaghavi/RamseyQuantumMARL.git}
 }
