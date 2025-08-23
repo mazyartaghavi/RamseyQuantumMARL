@@ -1,0 +1,24 @@
+qio-marl/
+├─ README.md
+├─ requirements.txt
+├─ LICENSE
+├─ .gitignore
+├─ configs/
+│  └─ uav_default.yaml
+├─ scripts/
+│  └─ train_uav.py
+├─ qio_marl/
+│  ├─ __init__.py
+│  ├─ algos/
+│  │  └─ qio_marl.py
+│  ├─ agents/
+│  │  ├─ policy.py
+│  │  └─ qio_operator.py
+│  ├─ envs/
+│  │  └─ forest_uav.py
+│  └─ utils/
+│     ├─ replay_buffer.py
+│     ├─ schedules.py
+│     └─ logger.py
+└─ tests/
+   └─ test_q_operator.py
