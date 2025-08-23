@@ -1,0 +1,14 @@
+
+---
+
+## `requirements.txt`
+
+```txt
+torch>=2.1
+numpy>=1.25
+matplotlib>=3.8
+pyyaml>=6.0
+tqdm>=4.65
+pandas>=2.0
+gymnasium>=0.29
+pytest>=7.4
