@@ -1,0 +1,33 @@
+import numpy as np
+import itertools
+
+
+class QUBOBuilder:
+    """
+    Constructs QUBO matrix for Ramsey-guided clique suppression
+    and entropy-driven exploration incentives.
+    """
+
+    def __init__(self, num_agents, lambda_clique=1.0, entropy_weight=1.0):
+        self.N = num_agents
+        self.lambda_clique = lambda_clique
+        self.entropy_weight = entropy_weight
+
+    def build_qubo(self, interaction_graph, entropy_scores):
+        """
+        Q = objective for:
+            maximize entropy - lambda * clique_penalty
+        converted to minimization QUBO.
+        """
+        Q = np.zeros((self.N, self.N))
+
+        # Entropy incentive (diagonal terms)
+        for i in range(self.N):
+            Q[i, i] -= self.entropy_weight * entropy_scores[i]
+
+        # Clique penalty (quadratic terms)
+        for i, j in interaction_graph.edges():
+            Q[i, j] += self.lambda_clique
+            Q[j, i] += self.lambda_clique
+
+        return Q
