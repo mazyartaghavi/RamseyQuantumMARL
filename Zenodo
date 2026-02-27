@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Ramsey-Guided Quantum-Inspired Optimization for MARL"
+authors:
+  - family-names: "Taghavi"
+    given-names: "Mazyar"
+version: 1.0.0
+doi: 10.5281/zenodo.xxxxxxx
+
+{
+  "title": "RGQO-MARL",
+  "creators": [
+    {
+      "name": "Taghavi, Mazyar",
+      "affiliation": "Your Institution"
+    }
+  ],
+  "description": "Official implementation of Ramsey-Guided Quantum-Inspired Optimization for MARL",
+  "license": "MIT"
+}
+
