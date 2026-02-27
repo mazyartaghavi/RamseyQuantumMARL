@@ -1,0 +1,23 @@
+class RGQOTrainer:
+
+    def __init__(self, agents, solver, qubo_builder):
+        self.agents = agents
+        self.solver = solver
+        self.qubo_builder = qubo_builder
+
+    def optimize_structure(self, graph, entropy_scores):
+        Q = self.qubo_builder.build_qubo(graph, entropy_scores)
+        return self.solver.solve(Q)
+
+    def training_step(self, states, graph, entropy_scores):
+        structure_mask = self.optimize_structure(graph, entropy_scores)
+
+        actions = []
+        for i, agent in enumerate(self.agents):
+            if structure_mask[i] == 1:
+                action, _ = agent.act(states[i])
+            else:
+                action = None
+            actions.append(action)
+
+        return actions
