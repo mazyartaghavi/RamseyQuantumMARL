@@ -1,0 +1,130 @@
+import torch
+
+def configure_device():
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        torch.backends.cudnn.benchmark = True
+        print(f"Using GPU: {torch.cuda.get_device_name(0)}")
+    else:
+        device = torch.device("cpu")
+        print("Using CPU")
+    return device
+
+import torch
+
+class GPURolloutWorker:
+
+    def __init__(self, agent, env, device):
+        self.agent = agent.to(device)
+        self.env = env
+        self.device = device
+
+    def run_episode(self):
+        state = self.env.reset()
+        done = False
+        total_reward = 0
+
+        while not done:
+            state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device)
+            action, _ = self.agent.act(state_tensor)
+            state, reward, done, _ = self.env.step(action)
+            total_reward += reward
+
+        return total_reward
+
+
+
+import ray
+
+ray.init(ignore_reinit_error=True)
+
+@ray.remote
+class DistributedWorker:
+
+    def __init__(self, trainer_config):
+        from rgqo.training.trainer import RGQOTrainer
+        self.trainer = RGQOTrainer(**trainer_config)
+
+    def train_step(self):
+        return self.trainer.training_step()
+
+
+def launch_distributed_training(config, num_workers=4):
+
+    workers = [DistributedWorker.remote(config) for _ in range(num_workers)]
+
+    results = ray.get([w.train_step.remote() for w in workers])
+
+    return results
+
+python scripts/run_distributed.py
+
+import wandb
+
+class WandBLogger:
+
+    def __init__(self, config):
+        wandb.init(
+            project="RGQO-MARL",
+            config=config,
+            sync_tensorboard=True
+        )
+
+    def log_metrics(self, metrics, step):
+        wandb.log(metrics, step=step)
+
+    def finish(self):
+        wandb.finish()
+
+logger.log_metrics({
+    "reward": reward,
+    "clique_density": density,
+    "entropy": entropy
+}, step)
+
+pip install hydra-core
+
+defaults:
+  - experiment: rgqo
+  - optimizer: annealing
+
+seed: 42
+device: cuda
+num_agents: 10
+
+import hydra
+from omegaconf import DictConfig
+
+@hydra.main(config_path="../configs", config_name="config")
+def main(cfg: DictConfig):
+
+    print("Running with config:")
+    print(cfg)
+
+    from rgqo.training.trainer import RGQOTrainer
+    trainer = RGQOTrainer(cfg)
+    trainer.train()
+
+if __name__ == "__main__":
+    main()
+
+python scripts/run_experiment.py optimizer=hybrid experiment=baseline
+
+import numpy as np
+from scipy import stats
+
+def paired_t_test(results_a, results_b):
+    t_stat, p_value = stats.ttest_rel(results_a, results_b)
+    return t_stat, p_value
+
+def welch_test(results_a, results_b):
+    t_stat, p_value = stats.ttest_ind(results_a, results_b, equal_var=False)
+    return t_stat, p_value
+
+import numpy as np
+
+def cohen_d(a, b):
+    diff = np.mean(a) - np.mean(b)
+    pooled_std = np.sqrt((np.var(a) + np.var(b)) / 2)
+    return diff / pooled_std
+
