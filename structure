@@ -1,0 +1,59 @@
+RGQO-MARL/
+│
+├── README.md
+├── requirements.txt
+├── setup.py
+├── configs/
+│   ├── default.yaml
+│   ├── uav_surveillance.yaml
+│   └── ablation.yaml
+│
+├── rgqo/
+│   ├── __init__.py
+│   ├── agents/
+│   │   ├── ppo_agent.py
+│   │   ├── multi_agent_controller.py
+│   │   └── policy_network.py
+│   │
+│   ├── optimization/
+│   │   ├── qubo_builder.py
+│   │   ├── annealing_solver.py
+│   │   ├── hybrid_solver.py
+│   │   └── clique_penalty.py
+│   │
+│   ├── graph/
+│   │   ├── interaction_graph.py
+│   │   ├── clique_analysis.py
+│   │   └── structural_metrics.py
+│   │
+│   ├── environments/
+│   │   ├── uav_forest_env.py
+│   │   ├── grid_entropy_env.py
+│   │   └── wrappers.py
+│   │
+│   ├── training/
+│   │   ├── trainer.py
+│   │   ├── rollout_buffer.py
+│   │   └── learning_dynamics.py
+│   │
+│   └── utils/
+│       ├── logger.py
+│       ├── metrics.py
+│       ├── seed.py
+│       └── visualization.py
+│
+├── experiments/
+│   ├── train_rgqo.py
+│   ├── train_baseline_ppo.py
+│   ├── ablation_study.py
+│   └── evaluate_transfer.py
+│
+├── benchmarks/
+│   ├── noise_robustness.py
+│   ├── scalability_analysis.py
+│   └── sample_efficiency.py
+│
+└── tests/
+    ├── test_qubo.py
+    ├── test_graph.py
+    └── test_solver.py
