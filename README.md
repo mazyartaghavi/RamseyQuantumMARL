@@ -11,6 +11,71 @@ observability. It includes:
 
 > This repo is intentionally small and pedagogical—ideal as a starting point to reproduce
 > trends and extend for larger benchmarks (SMAC/MPE).
+# Ramsey-Guided Quantum-Inspired Optimization (RGQO)  
+## Exploration–Exploitation Regulation in Multi-Agent Reinforcement Learning
+
+---
+
+## Overview
+
+This repository provides the official implementation of the framework:
+
+> **Ramsey-Guided Quantum-Inspired Optimization for Exploration–Exploitation in Multi-Agent Reinforcement Learning**
+
+RGQO integrates structural combinatorics (Ramsey theory) with quantum-inspired combinatorial optimization to regulate exploration diversity and coordination efficiency in cooperative multi-agent systems.
+
+The core contribution is a **Ramsey-regularized QUBO layer** embedded within a multi-agent reinforcement learning (MARL) pipeline. The optimization layer penalizes undesirable clique formation in agent interaction graphs, thereby encouraging structured diversity and mitigating premature convergence.
+
+Implementation codes are publicly available in this repository for full reproducibility.
+
+---
+
+## Key Contributions
+
+- Structural exploration control via Ramsey clique suppression  
+- QUBO-based combinatorial coordination optimization  
+- Quantum-inspired annealing solver for scalable structure selection  
+- Integration with PPO-based multi-agent learning  
+- Scalable graph-based coordination mechanism  
+- Reproducible benchmarks and ablation studies  
+
+---
+
+## Mathematical Formulation
+
+Let:
+- \( G_t = (V, E_t) \) denote the interaction graph at time \( t \)
+- \( x \in \{0,1\}^N \) denote the structure activation vector
+- \( H_i \) denote entropy-based exploration scores
+
+The QUBO objective is formulated as:
+
+\[
+\min_{x \in \{0,1\}^N} 
+\quad x^\top Q x
+\]
+
+where
+
+\[
+Q_{ii} = -\alpha H_i
+\]
+
+\[
+Q_{ij} = \lambda \cdot \mathbf{1}_{(i,j) \in E_t}
+\]
+
+This objective balances:
+
+- Exploration entropy maximization  
+- Clique density suppression  
+- Structural regularization  
+
+The optimization layer interacts with MARL policy updates during training.
+
+---
+
+## Repository Structure
 
 ## Quickstart
 
