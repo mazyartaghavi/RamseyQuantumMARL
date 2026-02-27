@@ -1,0 +1,43 @@
+import numpy as np
+
+
+class SimulatedAnnealingSolver:
+    """
+    Classical quantum-inspired simulated annealing solver
+    for QUBO optimization.
+    """
+
+    def __init__(self, steps=500, initial_temp=10.0, cooling_rate=0.995):
+        self.steps = steps
+        self.initial_temp = initial_temp
+        self.cooling_rate = cooling_rate
+
+    def solve(self, Q):
+        N = Q.shape[0]
+        x = np.random.randint(0, 2, size=N)
+        T = self.initial_temp
+
+        def energy(x):
+            return x @ Q @ x
+
+        best_x = x.copy()
+        best_energy = energy(x)
+
+        for _ in range(self.steps):
+            i = np.random.randint(0, N)
+            x_new = x.copy()
+            x_new[i] = 1 - x_new[i]
+
+            delta = energy(x_new) - energy(x)
+
+            if delta < 0 or np.random.rand() < np.exp(-delta / T):
+                x = x_new
+
+            current_energy = energy(x)
+            if current_energy < best_energy:
+                best_energy = current_energy
+                best_x = x.copy()
+
+            T *= self.cooling_rate
+
+        return best_x
